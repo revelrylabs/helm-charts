@@ -2,12 +2,12 @@ apiVersion: v1
 entries:
   moondog-navigator:
   - apiVersion: v1
-    appVersion: v1beta1
-    created: "2019-11-21T14:27:09.012313-05:00"
+    appVersion: 0.0.1
+    created: "2019-11-21T14:42:56.154065-05:00"
     description: Moondog Navigator (https://revelry.co)
-    digest: bc03a0d2d277637e02a6b6f4c3c5d7e94fb2254fe544e9352b9ee095ce25ccfd
+    digest: bc119ad5399f5cda038e8ad5f7fa871fd124aa4d4a73f6d351b6b2db32a5f7fd
     name: moondog-navigator
     urls:
-    - https://revelrylabs.github.io/helm-charts/moondog-navigator-v1beta1.tgz
-    version: v1beta1
-generated: "2019-11-21T14:27:09.010271-05:00"
+    - https://revelrylabs.github.io/helm-charts/moondog-navigator-0.0.1.tgz
+    version: 0.0.1
+generated: "2019-11-21T14:42:56.153452-05:00"
