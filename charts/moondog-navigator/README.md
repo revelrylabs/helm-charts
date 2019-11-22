@@ -32,7 +32,7 @@ We recommend the OIDC provider [dex](https://github.com/dexidp/dex) for operator
 ## Adding the `revelrylabs` Helm repo
 
 ```sh
-$ helm repo add revelrylabs revelrylabs.github.io/helm-charts
+$ helm repo add revelrylabs https://revelrylabs.github.io/helm-charts
 ```
 
 ## Installing the chart
