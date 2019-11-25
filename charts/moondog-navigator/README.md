@@ -32,7 +32,7 @@ We recommend the OIDC provider [dex](https://github.com/dexidp/dex) for operator
 ## Adding the `revelrylabs` Helm repo
 
 ```sh
-$ helm repo add revelrylabs revelrylabs.github.io/helm-charts
+$ helm repo add revelrylabs https://revelrylabs.github.io/helm-charts
 ```
 
 ## Installing the chart
@@ -40,12 +40,6 @@ $ helm repo add revelrylabs revelrylabs.github.io/helm-charts
 ```sh
 $ helm install revelrylabs/moondog-navigator -f your-config.yaml --namespace your-namespace
 ```
-
-It'll install chart with the default parameters. However most probably it won't work for you as-is, thus before installing the chart you need to consult to the [values.yaml](values.yaml) notes as well as [dex documentation][dex].
-
-## Upgrading an existing release to a new major version
-
-A major chart version change (like v1.5.1 -> v2.0.0) indicates that there is an incompatible breaking change which requires manual actions.
 
 ## Configuration
 
