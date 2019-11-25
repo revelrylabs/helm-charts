@@ -16,3 +16,6 @@
 
 # developer testing configs like "foo.dev.yaml"
 **/*.dev.*
+
+# asdf helm version
+**/.tool-versions

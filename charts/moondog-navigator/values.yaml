@@ -20,7 +20,7 @@ clusters:
 
 image:
   repository: revelrylabs/moondog-navigator
-  tag: v1beta1
+  tag: v1beta2
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

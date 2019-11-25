@@ -54,7 +54,7 @@ A major chart version change (like v1.5.1 -> v2.0.0) indicates that there is an 
 | replicaCount | The number of web server pod replicas for the deployment | 1 |
 | clusters | A list of clusters that Moondog Navigator can browse and interact with. | [] |
 | image.repository | The Docker repo to pull the image from. | revelrylabs/moondog-navigator |
-| image.tag | The Docker image tag to pull. | v1beta1 |
+| image.tag | The Docker image tag to pull. | v1beta2 |
 | image.pullPolicy | The `imagePullPolicy` for the Deployment. | IfNotPresent |
 | imagePullSecrets | Secrets to be used if you are going to pull the image from a private Docker repo. | [] |
 | nameOverride | If set, overrides the name `"moondog-navigator"` with this. | "" |
