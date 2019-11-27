@@ -26,8 +26,19 @@ clusters:
 
 We recommend the OIDC provider [dex](https://github.com/dexidp/dex) for operators who are just getting started.
 
-* Install [Dex](https://hub.helm.sh/charts/stable/dex) via its Helm chart.
-* Configure the Kubernetes API server flags to use Dex, using this guide: https://github.com/dexidp/dex/blob/master/Documentation/kubernetes.md#configuring-the-openid-connect-plugin
+Install [Dex](https://hub.helm.sh/charts/stable/dex) via its Helm chart. Here is an example configuration for the `staticClients` section. Supply a custom secret, and point the `redirectURI` at the domain where you intend to host Moondog Navigator:
+
+```yaml
+staticClients:
+- id: moondog
+  secret: MyMoondogClientSecret
+  name: 'moondog'
+  # Where the app will be running.
+  redirectURIs:
+  - 'https://moondog.example.com/kubernetes/auth/callback'
+```
+
+Configure the Kubernetes API server flags to use Dex, using this guide: https://github.com/dexidp/dex/blob/master/Documentation/kubernetes.md#configuring-the-openid-connect-plugin
 
 ## Adding the `revelrylabs` Helm repo
 
@@ -71,6 +82,12 @@ $ helm install revelrylabs/moondog-navigator -f your-config.yaml --namespace you
 | affinity |  | {} |
 
 ## Example Configuration
+
+Notes:
+
+* A cluster's `apiUrl` is the URL of its Kubernetes API server.
+* A cluster's OIDC `clientId` and `clientSecret` should match the static client you configured in Dex.
+* The ingress' host should match the host of the `redirectURI` you configured in Dex.
 
 ```yaml
 appDomain: moondog.example.com
