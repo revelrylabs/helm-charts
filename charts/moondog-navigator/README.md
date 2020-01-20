@@ -26,10 +26,19 @@ clusters:
 
 We recommend the OIDC provider [dex](https://github.com/dexidp/dex) for operators who are just getting started.
 
-Install [Dex](https://hub.helm.sh/charts/stable/dex) via its Helm chart. Here is an example configuration for the `staticClients` section. Supply a custom secret, and point the `redirectURI` at the domain where you intend to host Moondog Navigator:
+Install [Dex](https://hub.helm.sh/charts/stable/dex) via its Helm chart. Here is an example configuration for the `staticClients` section. Supply a custom secret, and point the `redirectURI` at the domain where you intend to host Moondog Navigator. Also be sure you add/update the trustedPeers section as shown below:
 
 ```yaml
+
+
 staticClients:
+ - id: dex-k8s-authenticator
+   name: "dex-k8s-authenticator"
+   secret: MyDexSecret
+   redirectURIs:
+   - https://login.example/com/callback
+   trustedPeers:
+     - moondog
 - id: moondog
   secret: MyMoondogClientSecret
   name: 'moondog'
