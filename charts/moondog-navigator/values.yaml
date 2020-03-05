@@ -8,6 +8,14 @@ appDomain: localhost
 
 containerPort: 5000
 
+# NOTE - Get your Grafana Dashboard UID out of the url...
+#
+# Log into Grafana.
+# Navigate to the Dashboard "Kubernetes / Compute Resources / Namespace (Pods)"
+#
+# URL looks like: https://grafana.example.com/d/85a562078cdf77779eaa1add43ccec1e/...
+# This part is the UID: 85a562078cdf77779eaa1add43ccec1e
+
 clusters:
   # - name: demo
   #   apiUrl: https://k8.example.com:6443
@@ -17,10 +25,13 @@ clusters:
   #     tokenUrl: https://dex.example.com/token
   #     clientId: demo-cluster
   #     clientSecret: "Your cluster's client secret"
+  #   grafana:
+  #     host: https://grafana.example.com
+  #     resources_dashboard_uid: your_uid_please_read_note_above
 
 image:
   repository: revelrylabs/moondog-navigator
-  tag: v1beta2
+  tag: v1beta3
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

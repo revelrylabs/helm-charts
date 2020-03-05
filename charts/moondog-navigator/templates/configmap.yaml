@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "moondog-navigator.envConfigMapName" . }}
+  namespace: {{ $.Release.Namespace }}
+data:
+  APP_DOMAIN: {{ .Values.appDomain | quote }}
+  PORT: {{ .Values.containerPort | toString | quote }}
+  {{- range .Values.clusters -}}
+  {{ $clusterName := (.name | upper) }}
+  CLUSTERCONFIG_{{ $clusterName }}_API_HOST: {{ .apiUrl | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_CA_CERT_URL: {{ .caCertUrl | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_DEX_AUTH_URL: {{ .oidc.authUrl | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_DEX_TOKEN_URL: {{ .oidc.tokenUrl | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_DEX_CLIENT_ID: {{ .oidc.clientId | quote }}
+  {{- if .grafana }}
+  CLUSTERCONFIG_{{ $clusterName }}_GRAFANA_HOST: {{ .grafana.host | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_GRAFANA_DASH_UID: {{ .grafana.resources_dashboard_uid | quote }}
+  {{- end -}}
+  {{- end -}}

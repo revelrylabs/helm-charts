@@ -56,8 +56,15 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
-Create the name of the env config secret to use
+Create the name of the env secret to use
 */}}
 {{- define "moondog-navigator.envSecretName" -}}
+{{ include "moondog-navigator.fullname" . }}-env-secret
+{{- end -}}
+
+{{/*
+Create the name of the env configmap to use
+*/}}
+{{- define "moondog-navigator.envConfigMapName" -}}
 {{ include "moondog-navigator.fullname" . }}-env-config
 {{- end -}}

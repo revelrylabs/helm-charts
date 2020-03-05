@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "moondog-navigator.fullname" . }}
+  namespace: {{ $.Release.Namespace }}
   labels:
 {{ include "moondog-navigator.labels" . | indent 4 }}
 spec:
@@ -26,6 +27,8 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           envFrom:
+            - configMapRef:
+                name: {{ include "moondog-navigator.envConfigMapName" . }}
             - secretRef:
                 name: {{ include "moondog-navigator.envSecretName" . }}
           securityContext:
