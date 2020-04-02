@@ -68,3 +68,17 @@ Create the name of the env configmap to use
 {{- define "moondog-navigator.envConfigMapName" -}}
 {{ include "moondog-navigator.fullname" . }}-env-config
 {{- end -}}
+
+{{/*
+Create the name of the image pull secret to use
+*/}}
+{{- define "moondog-navigator.imagePullSecretName" -}}
+{{ include "moondog-navigator.fullname" . }}-pull-secret
+{{- end -}}
+
+{{/*
+Create the imagePullSecret to use as the docker image is in a private repo
+*/}}
+{{- define "imagePullSecret" }}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.imageCredentials.registry (printf "%s:%s" .Values.imageCredentials.username .Values.imageCredentials.password | b64enc) | b64enc }}
+{{- end }}
