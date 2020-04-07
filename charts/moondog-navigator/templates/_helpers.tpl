@@ -68,3 +68,15 @@ Create the name of the env configmap to use
 {{- define "moondog-navigator.envConfigMapName" -}}
 {{ include "moondog-navigator.fullname" . }}-env-config
 {{- end -}}
+
+{{/*
+Create the name of the imagePullSecret to use
+*/}}
+{{- define "moondog-navigator.imagePullSecretName" -}}
+{{ include "moondog-navigator.fullname" . }}-image-pull-secret
+{{- end -}}
+
+{{- define "moondog-navigator.dockerconfigjson" }}
+{{- $authToken := printf "%s:%s" .username .password | b64enc -}}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .registry $authToken }}
+{{- end }}
