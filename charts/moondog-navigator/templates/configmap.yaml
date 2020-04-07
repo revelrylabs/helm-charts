@@ -8,8 +8,10 @@ data:
   PORT: {{ .Values.containerPort | toString | quote }}
   {{- range .Values.clusters -}}
   {{ $clusterName := (.name | upper) }}
-  CLUSTERCONFIG_{{ $clusterName }}_API_HOST: {{ .apiUrl | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_API_HOST: {{ .api.url | quote }}
   CLUSTERCONFIG_{{ $clusterName }}_CA_CERT_URL: {{ .caCertUrl | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_OAUTH2_AUDIENCE: {{ printf "audience:server:client_id:%s" .api.oidcClientId | quote }}
+  CLUSTERCONFIG_{{ $clusterName }}_OAUTH2_SCOPES: openid
   CLUSTERCONFIG_{{ $clusterName }}_DEX_AUTH_URL: {{ .oidc.authUrl | quote }}
   CLUSTERCONFIG_{{ $clusterName }}_DEX_TOKEN_URL: {{ .oidc.tokenUrl | quote }}
   CLUSTERCONFIG_{{ $clusterName }}_DEX_CLIENT_ID: {{ .oidc.clientId | quote }}

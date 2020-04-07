@@ -18,7 +18,9 @@ containerPort: 5000
 
 clusters:
   # - name: demo
-  #   apiUrl: https://k8.example.com:6443
+  #   api:
+  #     url: https://k8.example.com:6443
+  #     oidcClientId: dex
   #   caCertUrl: https://k8.example.com/certificates/demo-cluster-cert.crt
   #   oidc:
   #     authUrl: https://dex.example.com/auth

@@ -13,13 +13,15 @@ Create a client configuration for Moondog Navigator, and gather all of the infor
 ```yaml
 clusters:
   - name: mycluster # alphanumeric, all lowercase, no spaces
-    apiUrl: https://<YOUR K8 API SERVER'S HOST>:6443
+    api:
+      url: https://<YOUR K8 API SERVER'S HOST>:6443
+      oidcClientId: <THE VALUE OF YOUR KUBERNETES CLUSTER API'S --oidc-client-id FLAG>
     caCertUrl: <URL OF YOUR CA CERTIFICATE FILE>
     oidc:
       authUrl: <YOUR OIDC PROVIDER'S AUTH URL>
       tokenUrl: https://<YOUR OIDC PROVIDER'S TOKEN URL>
-      clientId: <MOONDOG NAVIGATOR CLIENT ID>
-      clientSecret: <MOONDOG NAVIGATOR CLIENT SECRET>
+      clientId: <MOONDOG NAVIGATOR OIDC CLIENT ID>
+      clientSecret: <MOONDOG NAVIGATOR OIDC CLIENT SECRET>
 ```
 
 ### Getting Started with OpenID Connect (OIDC)
@@ -29,22 +31,19 @@ We recommend the OIDC provider [dex](https://github.com/dexidp/dex) for operator
 Install [Dex](https://hub.helm.sh/charts/stable/dex) via its Helm chart. Here is an example configuration for the `staticClients` section. Supply a custom secret, and point the `redirectURI` at the domain where you intend to host Moondog Navigator. Also be sure you add/update the trustedPeers section as shown below:
 
 ```yaml
-
-
 staticClients:
- - id: dex-k8s-authenticator
-   name: "dex-k8s-authenticator"
-   secret: MyDexSecret
-   redirectURIs:
-   - https://login.example/com/callback
-   trustedPeers:
-     - moondog
-- id: moondog
-  secret: MyMoondogClientSecret
-  name: 'moondog'
-  # Where the app will be running.
-  redirectURIs:
-  - 'https://moondog.example.com/kubernetes/auth/callback'
+  - id: dex
+    name: dex
+    secret: MyDexSecret
+    redirectURIs:
+      - https://dex.example.com/callback
+    trustedPeers:
+      - moondog
+  - id: moondog
+    name: moondog-navigator
+    secret: MyMoondogNavigatorClientSecret
+    redirectURIs:
+      - https://moondog-navigator.example.com/kubernetes/auth/callback
 ```
 
 Configure the Kubernetes API server flags to use Dex, using this guide: https://github.com/dexidp/dex/blob/master/Documentation/kubernetes.md#configuring-the-openid-connect-plugin
@@ -94,8 +93,9 @@ $ helm install revelrylabs/moondog-navigator -f your-config.yaml --namespace you
 
 Notes:
 
-* A cluster's `apiUrl` is the URL of its Kubernetes API server.
-* A cluster's OIDC `clientId` and `clientSecret` should match the static client you configured in Dex.
+* A cluster's `api.url` is the URL of its Kubernetes API service.
+* The `api.oidcClientId` should match the value of the Kubernetes API service's `--oidc-client-id` flag.
+* A cluster's OIDC `clientId` and `clientSecret` should match the static client you configured for Moondog Navigator in Dex.
 * The ingress' host should match the host of the `redirectURI` you configured in Dex.
 
 ```yaml
@@ -103,7 +103,9 @@ appDomain: moondog.example.com
 
 clusters:
   - name: production
-    apiUrl: https://k8api.example.com:6443
+    api:
+      url: https://k8api.example.com:6443
+      oidcClientId: dex
     caCertUrl: https://certs.example.com/etc/kubernetes/pki/ca.crt
     oidc:
       authUrl: https://dex.example.com/auth
