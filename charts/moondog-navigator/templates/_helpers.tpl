@@ -73,7 +73,7 @@ Create the name of the env configmap to use
 Create the name of the imagePullSecret to use
 */}}
 {{- define "moondog-navigator.imagePullSecretName" -}}
-{{ include "moondog-navigator.fullname" . }}-imagePullSecret
+{{ include "moondog-navigator.fullname" . }}-image-pull-secret
 {{- end -}}
 
 {{- define "moondog-navigator.dockerconfigjson" }}
