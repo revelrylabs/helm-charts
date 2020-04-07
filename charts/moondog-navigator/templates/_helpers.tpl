@@ -75,3 +75,8 @@ Create the name of the imagePullSecret to use
 {{- define "moondog-navigator.imagePullSecretName" -}}
 {{ include "moondog-navigator.fullname" . }}-imagePullSecret
 {{- end -}}
+
+{{- define "moondog-navigator.dockerconfigjson" }}
+{{- $authToken := printf "%s:%s" .username .password | b64enc -}}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .registry $authToken }}
+{{- end }}

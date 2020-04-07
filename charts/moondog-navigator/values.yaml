@@ -43,8 +43,9 @@ imagePullSecret:
   name:
   # To create the secret, supply the intended values of .dockerconfigjson to `create`.
   create:
-    "https://docker.example.com/my-registry":
-      auth: username:password
+    registry: docker.example.com
+    username: username
+    password: password
 
 nameOverride: ""
 fullnameOverride: ""
