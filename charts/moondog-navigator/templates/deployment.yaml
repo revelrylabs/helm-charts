@@ -17,10 +17,10 @@ spec:
         app.kubernetes.io/name: {{ include "moondog-navigator.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+      {{- if .Values.imagePullSecret }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        - name: {{ template "moondog-navigator.imagePullSecretName" . }}
+      {{- end }}
       serviceAccountName: {{ template "moondog-navigator.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}

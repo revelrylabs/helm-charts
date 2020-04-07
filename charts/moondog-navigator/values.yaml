@@ -36,7 +36,16 @@ image:
   tag: v1beta3
   pullPolicy: IfNotPresent
 
-imagePullSecrets: []
+imagePullSecret:
+  # If `name` is not set, a name is generated using the fullname template.
+  # Make sure you explicitly set the `name` if you intend to use an existing secret
+  # instead of creating one here.
+  name:
+  # To create the secret, supply the intended values of .dockerconfigjson to `create`.
+  create:
+    "https://docker.example.com/my-registry":
+      auth: username:password
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -46,7 +55,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
-  imagePullSecrets: []
 
 podSecurityContext: {}
   # fsGroup: 2000
