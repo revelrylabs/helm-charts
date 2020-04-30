@@ -1,0 +1,55 @@
+# Define the names and rules for the
+# ClusterRoles and Roles to be created.
+#
+# EXAMPLE
+#
+# =================
+#
+# roleDefinitions:
+#   my-admin-role-name:
+#
+#     # The definition follows the format of the `rules` section
+#     # of a ClusterRoleBinding or RoleBinding as documented
+#     # here: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+#
+#     - apiGroups:
+#       - '*'
+#     resources:
+#       - '*'
+#     verbs:
+#       - '*'
+#   - nonResourceURLs:
+#       - '*'
+#     verbs:
+#       - '*'
+
+roleDefinitions: {}
+
+# The chart will only create the
+# Roles and ClusterRoles that have bindings.
+#
+# EXAMPLE
+#
+# =================
+#
+# bindings:
+#   cluster:
+#     groups:
+#       'my-github-org:my-administrators-team':
+#         - my-admin-role
+#       'my-github-org:my-engineering-team':
+#         - another-role
+#         - yet-another-role-too
+#     users:
+#       root:
+#         - my-admin-role
+#   namespaces:
+#     my-demo-namespace:
+#       groups:
+#         my-demo-guests-group:
+#           - role-to-read-everything-but-secrets
+#       users:
+#         my-demo-admin-user:
+#           - my-admin-role
+
+bindings: {}

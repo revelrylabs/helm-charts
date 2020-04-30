@@ -1,0 +1,6 @@
+apiVersion: v2
+name: user-permissions
+description: A utility chart for managing ClusterRoles, Roles, and corresponding bindings for Users and Groups
+type: application
+version: 0.1.0
+appVersion: N/A

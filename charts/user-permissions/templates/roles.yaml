@@ -1,0 +1,21 @@
+{{ $roleDefinitions := .Values.roleDefinitions }}
+
+{{- range $namespace, $config := .Values.bindings.namespaces }}
+  {{ $allRoleNames := list }}
+
+  {{- range $section := list $config.groups $config.users }}
+    {{- range $_, $roleNames := $section }}
+      {{ $allRoleNames = concat $allRoleNames $roleNames }}
+    {{- end }}
+  {{- end }}
+
+  {{- range $roleName := uniq $allRoleNames }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: {{ $namespace | quote }}
+  name: {{ $roleName | quote }}
+rules: {{ get $roleDefinitions $roleName | toYaml | nindent 2 }}
+  {{- end }}
+{{- end }}
