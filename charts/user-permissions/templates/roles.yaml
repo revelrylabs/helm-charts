@@ -16,6 +16,11 @@ kind: Role
 metadata:
   namespace: {{ $namespace | quote }}
   name: {{ $roleName | quote }}
-rules: {{ get $roleDefinitions $roleName | toYaml | nindent 2 }}
+rules:
+    {{- range (get $roleDefinitions $roleName) }}
+      {{ if not .nonResourceURLs }}
+  - {{ . | toYaml | indent 4 | trim }}
+      {{- end }}
+    {{- end }}
   {{- end }}
 {{- end }}

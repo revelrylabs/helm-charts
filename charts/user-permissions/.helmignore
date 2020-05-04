@@ -21,6 +21,3 @@
 .idea/
 *.tmproj
 .vscode/
-
-# developer testing configs like "foo.dev.yaml"
-**/*.dev.*
