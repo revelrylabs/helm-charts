@@ -19,6 +19,9 @@ spec:
     spec:
       {{- if .Values.imagePullSecret }}
       imagePullSecrets:
+        - name: {{ .Values.imagePullSecret.name }}
+      {{- else }}
+      imagePullSecrets:
         - name: {{ template "moondog-navigator.imagePullSecretName" . }}
       {{- end }}
       serviceAccountName: {{ template "moondog-navigator.serviceAccountName" . }}
