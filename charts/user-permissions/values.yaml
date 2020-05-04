@@ -28,28 +28,47 @@ roleDefinitions: {}
 # The chart will only create the
 # Roles and ClusterRoles that have bindings.
 #
+# Create 1 entry per user or group.
+# Set namespace to "*" for ClusterRole access,
+# or set it to a namespace name for Role access.
+#
 # EXAMPLE
 #
 # =================
 #
 # bindings:
-#   cluster:
-#     groups:
-#       'my-github-org:my-administrators-team':
-#         - my-admin-role
-#       'my-github-org:my-engineering-team':
-#         - another-role
-#         - yet-another-role-too
-#     users:
-#       root:
-#         - my-admin-role
-#   namespaces:
-#     my-demo-namespace:
-#       groups:
-#         my-demo-guests-group:
-#           - role-to-read-everything-but-secrets
-#       users:
-#         my-demo-admin-user:
-#           - my-admin-role
+#   - group: administrators
+#     bindTo:
+#       - namespace: '*'
+#         roles:
+#           - read-write-all
+#   - user: root
+#     bindTo:
+#       - namespace: '*'
+#         roles:
+#           - read-write-all
+#   - group: engineers
+#     bindTo:
+#       - namespace: '*'
+#         roles:
+#           - another-role
+#           - yet-another-role
+#   - group: demo-guests
+#     bindTo:
+#       - namespace: demo
+#         roles:
+#           - read-all-except-secrets
+#   - user: alice
+#     bindTo:
+#       - namespace: '*'
+#         roles:
+#           - read-all-except-secrets
+#       - namespace: another-namespace
+#         roles:
+#           - another-role
+#           - yet-another-role
+#       - namespace: demo
+#         roles:
+#           - read-write-all
 
-bindings: {}
+bindings: []
