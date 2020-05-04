@@ -1,7 +1,7 @@
 {{ $top := . }}
 
 {{- range $roleName, $_ := .Values.roleDefinitions }}
-  {{- range $namespace, $config := $top.Values.bindings.namespace }}
+  {{- range $namespace, $config := $top.Values.bindings.namespaces }}
     {{ $groups := list }}
     {{ $users := list }}
 
@@ -16,6 +16,8 @@
       {{- end }}
     {{- end }}
 
+    {{- if concat $groups $users }}
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -27,16 +29,17 @@ roleRef:
   kind: ClusterRole
   name: {{ $roleName | quote }}
 subjects:
-  {{- range $groups }}
+      {{- range $groups }}
   - apiGroup: rbac.authorization.k8s.io
     kind: Group
     name: {{ . | quote }}
-  {{- end }}
-  {{- range $users }}
+      {{- end }}
+      {{- range $users }}
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: {{ . | quote }}
-  {{- end }}
+      {{- end }}
 
+    {{- end }}
   {{- end }}
 {{- end }}
