@@ -1,4 +1,4 @@
-# moondog-navigator
+# user-permissions
 
 A utility chart for managing `ClusterRole`s, `Role`s, and corresponding bindings for `User`s and `Group`s.
 
