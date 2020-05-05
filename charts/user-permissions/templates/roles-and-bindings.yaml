@@ -1,0 +1,98 @@
+{{ $roleDefinitions := .Values.roleDefinitions }}
+{{ $byNamespaceAndName := dict }}
+
+{{/*
+
+For each entry in .Values.bindings, if it's the first time we have
+seen this namespace and role name, create a (Cluster)Role for it,
+using the rules from the same-named entry in $roleDefinitions.
+
+Keep track of which subjects to bind to it in $byNamespaceAndName, for later.
+
+*/}}
+
+{{- range .Values.bindings }}
+  {{ $currentBinding := . }}
+  {{- range .bindTo }}
+    {{ $namespace := .namespace }}
+    {{ $isCluster := eq $namespace "*" }}
+    {{ $clusterStr := $isCluster | ternary "Cluster" "" }}
+    {{- range .roles }}
+      {{ $key := printf "%s/%s" $namespace . }}
+      {{ $bindings := get $byNamespaceAndName $key }}
+      {{- if not $bindings }}
+        {{ $bindings = list }}
+
+        {{/* BEGIN ROLE */}}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ printf "%sRole" $clusterStr }}
+metadata:
+  {{- if not $isCluster }}
+  namespace: {{ $namespace | quote }}
+  {{- end }}
+  name: {{ . | quote }}
+rules:
+  {{- range get $roleDefinitions . }}
+  {{- /* Skip nonResourceURLs for namespaced Roles */}}
+  {{- if (or $isCluster (not .nonResourceURLs)) }}
+  - {{ . | toYaml | indent 4 | trim }}
+  {{- end }}
+  {{- end }}
+        
+        {{/* END ROLE */}}
+      {{- end }}
+
+      {{/* Add $currentBinding to the list of binding targets for this (Cluster)Role */}}
+      {{ $bindings = append $bindings $currentBinding }}
+      {{ $byNamespaceAndName = set $byNamespaceAndName $key $bindings }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{/*
+
+Use $byNamespaceAndName to create corresponding (Cluster)RoleBindings
+that include the correct Users and Groups.
+
+*/}}
+
+{{- range $key, $bindings := $byNamespaceAndName }}
+  {{ $namespaceAndName := regexSplit "/" $key 2 }}
+  {{ $namespace := index $namespaceAndName 0 }}
+  {{ $name := index $namespaceAndName 1 }}
+  {{ $isCluster := eq $namespace "*" }}
+  {{ $clusterStr := $isCluster | ternary "Cluster" "" }}
+
+    {{/* BEGIN BINDING OUTPUT */}}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ printf "%sRoleBinding" $clusterStr }}
+metadata:
+  {{- if not $isCluster }}
+  namespace: {{ $namespace | quote }}
+  {{- end }}
+  name: {{ $name | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: {{ printf "%sRole" $clusterStr }}
+  name: {{ $name | quote }}
+subjects:
+  {{- range $bindings }}
+  {{- with .user }}
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: {{ . | quote }}
+  {{- end }}
+  {{- with .group }}
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: {{ . | quote }}
+  {{- end }}
+  {{- end }}
+
+    {{/* END BINDING OUTPUT */}}
+
+{{- end }}
