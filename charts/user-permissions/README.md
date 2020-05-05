@@ -1,6 +1,10 @@
 # moondog-navigator
 
-A utility chart for managing ClusterRoles, Roles, and corresponding bindings for Users and Groups
+A utility chart for managing `ClusterRole`s, `Role`s, and corresponding bindings for `User`s and `Group`s.
+
+**The chart does** provide a single, simple, readable source of truth for granting rule-based permissions your cluster's users.
+
+**The chart does NOT** expose the full power of [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac) or deal with more advanced topics like `ServiceAccount` permissions and `ClusterRole` aggregation.
 
 ## TL;DR
 
