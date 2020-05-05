@@ -2,8 +2,17 @@ apiVersion: v1
 entries:
   moondog-navigator:
   - apiVersion: v1
+    appVersion: 0.0.5
+    created: "2020-05-05T11:30:47.097173-04:00"
+    description: Moondog Navigator (https://moondog.co)
+    digest: de89b423edec33c2bf5665d9473becb78850d90907f68718da2cea5ab40bfdb3
+    name: moondog-navigator
+    urls:
+    - https://revelrylabs.github.io/helm-charts/moondog-navigator-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v1
     appVersion: 0.0.4
-    created: "2020-04-07T15:55:02.653475-04:00"
+    created: "2020-05-05T11:30:47.096196-04:00"
     description: Moondog Navigator (https://moondog.co)
     digest: d7fcf449d308ccbeca15dfa04ba764539e2b1149992729e8d351d8171a6f4559
     name: moondog-navigator
@@ -12,7 +21,7 @@ entries:
     version: 0.0.4
   - apiVersion: v1
     appVersion: 0.0.3
-    created: "2020-04-07T15:55:02.6521-04:00"
+    created: "2020-05-05T11:30:47.094449-04:00"
     description: Moondog Navigator (https://moondog.co)
     digest: 6b4ce3796e38815a7366d6a7cca2aa051efc608d40ce7346e29f3f2d92e47327
     name: moondog-navigator
@@ -21,7 +30,7 @@ entries:
     version: 0.0.3
   - apiVersion: v1
     appVersion: 0.0.2
-    created: "2020-04-07T15:55:02.647847-04:00"
+    created: "2020-05-05T11:30:47.08862-04:00"
     description: Moondog Navigator (https://revelry.co)
     digest: 93ec3d19a1b292f72c563c920380ddd632671380cf31be3080edac24bc2b1ee9
     name: moondog-navigator
@@ -30,11 +39,23 @@ entries:
     version: 0.0.2
   - apiVersion: v1
     appVersion: 0.0.1
-    created: "2020-04-07T15:55:02.646179-04:00"
+    created: "2020-05-05T11:30:47.08649-04:00"
     description: Moondog Navigator (https://revelry.co)
     digest: bc119ad5399f5cda038e8ad5f7fa871fd124aa4d4a73f6d351b6b2db32a5f7fd
     name: moondog-navigator
     urls:
     - https://revelrylabs.github.io/helm-charts/moondog-navigator-0.0.1.tgz
     version: 0.0.1
-generated: "2020-04-07T15:55:02.643575-04:00"
+  user-permissions:
+  - apiVersion: v2
+    appVersion: N/A
+    created: "2020-05-05T11:30:47.098786-04:00"
+    description: A utility chart for managing ClusterRoles, Roles, and corresponding
+      bindings for Users and Groups
+    digest: 4f4afd0dea937579c6902cb3437c36e4fe3b17b28b06794c15eba9a2211def18
+    name: user-permissions
+    type: application
+    urls:
+    - https://revelrylabs.github.io/helm-charts/user-permissions-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-05-05T11:30:47.084711-04:00"
