@@ -5,8 +5,7 @@ A utility chart for managing ClusterRoles, Roles, and corresponding bindings for
 ## TL;DR
 
 * Write a single set of `roleDefinitions` to describe the permissions that you might want to grant your Users and Groups.
-* Configure `bindings.cluster` to generate cluster-level ClusterRoles and ClusterRoleBindings.
-* Configure `bindings.namespaces` to generate namespaced Roles and RoleBindings.
+* Configure `bindings` to generate corresponding `(Cluster)Role`s and `(Cluster)RoleBinding`s.
 
 Example:
 
@@ -39,26 +38,42 @@ roleDefinitions:
         - watch
         - list
 
+# NOTE: `namespace: '*'` denotes cluster-level access.
+
 bindings:
-  cluster:
-    groups:
-      administrators:
-        - read-write-all
-      engineers:
-        - read-all
-    users:
-      root:
-        - read-write-all
-  namespaces:
-    demo:
-      groups:
-        guests:
+  - group: administrators
+    bindTo:
+      # Members of the "admninistrators" group have cluster-wide read and write permissions.
+      - namespace: '*'
+        roles:
+          - read-write-all
+  - group: readers
+    bindTo:
+      # Members of the "readers" group have cluster-wide read permissions.
+      - namespace: '*'
+        roles:
           - read-all
+  - group: demo-guests
+    bindTo:
+      # Members of the "demo-guests" group have read permissions in namespace "demo".
+      - namespace: demo
+        roles:
+          - read-all
+  - user: alice
+    bindTo:
+      # User "alice" has cluster-wide read permissions.
+      - namespace: '*'
+        roles:
+          - read-all
+      # User "alice" has read and write permissions in namespace "demo".
+      - namespace: demo
+        roles:
+          - read-write-all
 ```
 
 ## Role definitions in depth
 
-The `roleDefinitions` configuration section defines ClusterRoles and/or Roles that _may_ be created by the chart. Each key is the name of the potential ClusterRole/Role, and the value is its [set of `rules`](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole).
+The `roleDefinitions` configuration section defines `ClusterRole`s and/or `Role`s that _may_ be created by the chart. Each key is the name of the potential `ClusterRole`/`Role`, and the value is its [set of `rules`](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole).
 
 Example:
 
@@ -82,41 +97,81 @@ roleDefinitions:
         - list
 ```
 
-The chart will create a ClusterRole for a given definition _only if you ask to use it_ in the `bindings.cluster` section of the chart configuration.
-
-The chart will create a Role for a given definition on namespace `"foo"` _only if you ask to use it_ in the `bindings.cluster.foo` section of the chart configuration.
+Corresponding `ClusterRole`s or `Role`s will be created from these definitions (or not) based upon the `bindings` you define. See the next section for more details.
 
 ## Bindings in depth
 
-The `bindings.cluster` section deals with ClusterRoles and ClusterRoleBindings, and the `bindings.namespaces` section deals with namespaced Roles and RoleBindings.
+`ClusterRole`s and `ClusterRoleBinding`s belong to the cluster itself and grant permissions on every namespace. In the chart's configuration, we denote cluster-level access with `namespace: '*'`.
 
-Example:
+`Role`s and `RoleBinding`s belong to a `Namespace` and grant permissions only within that `Namespace`. In the chart's configuration, we denote access to a `Namespace` named "foo" with `namespace: "foo"`.
+
+For each combination of `namespace` and role name found in the `bindings` configuration, the chart will create:
+
+  * One `ClusterRole` or `Role` whose rules come from the same-named `roleDefinitions` key.
+  * One `ClusterRoleBinding` or `RoleBinding` of the same name, which will bind the `Role`/`ClusterRole` to every `Group` or `User` that has a `bindTo` for that `namespace` role name.
+
+Consider the following `values.yaml`:
 
 ```yaml
+# Obviously, to actually set permissions,
+# You would give these definitions some rules.
+roleDefinitions:
+  read-all: []
+  read-all-except-secrets: []
+  write-all: []
+  unused-definition: []
+
 bindings:
-  cluster:
-    groups:
-      administrators:
-        - read-write-all
-      engineers:
-        - read-all
-    users:
-      alice:
-        - read-write-all
-  namespaces:
-    demo:
-      groups:
-        demo-guests:
-          - read-all
-      users:
-        bob:
-          - read-write-all
+  - group: alpha
+    bindTo:
+      - namespace: '*'
+        roles:
+          - read-all-except-secrets # Grant cluster-level "read-all-except-secrets" to Group "alpha"
+      - namespace: foo
+        roles:
+          - read-all # Grant "read-all" to Group "alpha" in Namespace "foo"
+          - write-all # Grant "write-all" to Group "alpha" in Namespace "foo"
+  - group: bravo
+    bindTo:
+      - namespace: foo
+        roles:
+          - read-all-except-secrets # Grant read-all-except-secrets to Group "bravo" in Namespace "foo"
+  - user: bob
+    bindTo:
+      - namespace: '*'
+        roles:
+          - read-all # Grant cluster-level "real-all" to User "bob"
+      - namespace: foo
+        roles:
+          - read-all # Grant "read-all" to User "bob" in Namespace "foo"
+          - write-all # Grant "write-all" to User "bob" in Namespace "foo"
+
 ```
 
-In the above example:
+This is how the chart creates Kubernetes resources:
 
-* The Group `"administrators"` will be granted the `"read-write-all"` ClusterRole.
-* The Group `"engineers"` will be granted the `"read-all"` ClusterRole.
-* The User `"alice"` will be granted the `"read-write-all"` ClusterRole.
-* The Group `"demo-guests"` will be granted the `"read-all"` Role on the Namespace `"demo"`.
-* The User `"bob"` will be granted the `"read-write-all"` Role on the Namespace `"demo"`.
+* No `ClusterRole` or `Role`s are created for "unused-definition" because no subjects use it.
+* At the cluster level:
+  * Creates `ClusterRole` "read-all"
+  * Creates `ClusterRoleBinding` "read-all"
+    * Which binds `ClusterRole` "read-all" to subjects:
+      * `User` "bob"
+  * Creates `ClusterRole` "read-all-except-secrets"
+  * Creates `ClusterRoleBinding` "read-all-except-secrets"
+    * Which binds `ClusterRole` "read-all-except-secrets" to subjects:
+      * `Group` "alpha"
+* In namespace "foo":
+  * Creates `Role` "read-all"
+  * Creates `RoleBinding` "read-all"
+    * Which binds `Role` "read-all" to subjects:
+      * `Group` alpha
+      * `User` "bob"
+  * Creates `Role` "write-all"
+  * Creates `RoleBinding` "write-all"
+    * Which binds `Role` "write-all" to subjects:
+      * `Group` "alpha"
+      * `User` "bob"
+  * Creates `Role` "read-all-except-secrets"
+  * Creates `RoleBinding` "read-all-except-secrets"
+    * Which binds `Role` "read-all-except-secrets" to subjects:
+      * `Group` "bravo"
